@@ -27,22 +27,40 @@ def get_Ranklist(n):
         ret += [ name.get("href")[6:] ]
     return ret
 
-rank_list = dict() # int: [str]
-for i in range(1, READING_RANKING_PAGE+1):
-    rlist = get_Ranklist(i)
-    for j in range(1, 100+1):
-        rank_list[(i-1)*100 + j] = rlist[j-1]
-    print("Ranking: %d page parsing completed." % i)
+print("BOJ Parser")
+print("1. Refresh ranking and user data")
+print("2. Get data from database and print the data")
+print("Your Selection:", end=" ")
+sel = int(input())
 
-solved_list = dict() # str: [int]
-for i in range(1, READING_RANKING_PAGE*100+1):
-    solved_list[rank_list[i]] = get_AC_List(rank_list[i])
-    print("Rank %d: AC list parsing completed." % i)
+if sel == 1:
+    rank_list = dict() # int: [str]
+    for i in range(1, READING_RANKING_PAGE+1):
+        rlist = get_Ranklist(i)
+        for j in range(1, 100+1):
+            rank_list[(i-1)*100 + j] = rlist[j-1]
+        print("Ranking: %d page parsing completed." % i)
 
-print(rank_list)
-print(solved_list)
+    solved_list = dict() # str: [int]
+    for i in range(1, READING_RANKING_PAGE*100+1):
+        solved_list[rank_list[i]] = get_AC_List(rank_list[i])
+        print("Rank %d: AC list parsing completed." % i)
 
-ranking_list_file = open('ranklist.bin', 'wb')
-solved_list_file = open('solvedlist.bin', 'wb')
-pickle.dump(rank_list, ranking_list_file)
-pickle.dump(solved_list, solved_list_file)
+    ranking_list_file = open('ranklist.bin', 'wb')
+    solved_list_file = open('solvedlist.bin', 'wb')
+    pickle.dump(rank_list, ranking_list_file)
+    pickle.dump(solved_list, solved_list_file)
+
+if sel == 2:
+    ranking_list_file = open('ranklist.bin', 'rb')
+    solved_list_file = open('solvedlist.bin', 'rb')
+    rank_list = pickle.load(ranking_list_file)
+    solved_list = pickle.load(solved_list_file)
+
+    print("Print rank_list? (Y/N)", end=" ")
+    s = input()
+    if s == 'Y' or s == 'y': print(rank_list)
+    
+    print("Print solved_list? (Y/N)", end=" ")
+    s = input()
+    if s == 'Y' or s == 'y': print(solved_list)

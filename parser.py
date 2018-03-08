@@ -1,9 +1,9 @@
 import requests
 from bs4 import BeautifulSoup
 import pickle
-import time
 
-READING_RANKING_PAGE = 2
+READING_RANKING_PAGE = 100
+NUM_OF_USERS = READING_RANKING_PAGE * 100
 
 def get_AC_List(username):
     resp = requests.get('https://www.acmicpc.net/user/' + username)
@@ -30,8 +30,7 @@ def get_Ranklist(n):
 print("BOJ Parser")
 print("1. Refresh ranking and user data")
 print("2. Get data from database and print the data")
-print("Your Selection:", end=" ")
-sel = int(input())
+sel = int(input("Your Selection: "))
 
 if sel == 1:
     rank_list = dict() # int: [str]
@@ -42,7 +41,7 @@ if sel == 1:
         print("Ranking: %d page parsing completed." % i)
 
     solved_list = dict() # str: [int]
-    for i in range(1, READING_RANKING_PAGE*100+1):
+    for i in range(1, NUM_OF_USERS+1):
         solved_list[rank_list[i]] = get_AC_List(rank_list[i])
         print("Rank %d: AC list parsing completed." % i)
 
@@ -50,6 +49,7 @@ if sel == 1:
     solved_list_file = open('solvedlist.bin', 'wb')
     pickle.dump(rank_list, ranking_list_file)
     pickle.dump(solved_list, solved_list_file)
+    print("Process completed.")
 
 if sel == 2:
     ranking_list_file = open('ranklist.bin', 'rb')
@@ -57,10 +57,9 @@ if sel == 2:
     rank_list = pickle.load(ranking_list_file)
     solved_list = pickle.load(solved_list_file)
 
-    print("Print rank_list? (Y/N)", end=" ")
-    s = input()
+    s = input("Print rank_list? (Y/N) ")
     if s == 'Y' or s == 'y': print(rank_list)
-    
-    print("Print solved_list? (Y/N)", end=" ")
-    s = input()
+
+    s = input("Print solved_list? (Y/N) ")
     if s == 'Y' or s == 'y': print(solved_list)
+    print("Process completed.")
